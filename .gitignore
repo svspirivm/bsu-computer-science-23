@@ -5,3 +5,11 @@
 **.iml
 **.rar
 **.zip
+**/Debug/*
+**.vcxproj.user
+**.vcxproj.filters
+**.vcxproj
+**.sln
+**/.vs/*
+**.pptx
+**.docx
