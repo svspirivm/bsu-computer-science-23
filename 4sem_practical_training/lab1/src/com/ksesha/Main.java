@@ -7,12 +7,14 @@ package com.ksesha;
 public class Main {
 
     public static void main(String[] args) {
-	    Flower rose = new Flower("rose", "red", 5);
-
-	    rose.printBudsColor();
-        System.out.println(rose.toString());
-
-	    rose.blossom();
-	    rose.wilt();
+    	try {
+			Flower rose = new Flower("rose", "red", 5);
+			rose.printBudsColor();
+			System.out.println(rose.toString());
+			rose.blossom();
+			rose.wilt();
+		} catch(Exception exception) {
+			System.out.println(exception.getMessage());
+		}
     }
 }
