@@ -1,5 +1,7 @@
 package com.ksesha;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.util.Arrays;
 
 public class Bud {
@@ -8,6 +10,8 @@ public class Bud {
     public Bud() { }
 
     public Bud(String color, int petals) {
+        if (petals < 1)
+            throw new IllegalArgumentException("Number of petals can't be less than 1");
         this.petals = new Petal[petals];
         for (int i = 0; i < petals; i++) {
             Petal petal = new Petal(color);
