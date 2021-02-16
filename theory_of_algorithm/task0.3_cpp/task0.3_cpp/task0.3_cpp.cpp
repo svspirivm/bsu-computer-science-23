@@ -64,7 +64,7 @@ public:
 
 	bool check(Node* vertex, long long min, long long max) {                 // min и max — минимально и максимально допустимые значения в вершинах поддерева.
 		if (vertex == nullptr) return true;
-		if (vertex->key < min || max < vertex->key) return false;
+		if (vertex->key < min || max <= vertex->key) return false;
 		return check(vertex->left, min, vertex->key) && check(vertex->right, vertex->key, max);
 	}
 
