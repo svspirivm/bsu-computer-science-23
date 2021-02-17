@@ -6,6 +6,7 @@
 #include<functional>
 #include<fstream>
 #include<algorithm>
+#include<utility>
 
 struct Node {
 	int64_t value = 0;
@@ -36,6 +37,7 @@ public:
 	}
 
 	BinarySearchTree(const std::vector<int64_t>& vertices) {
+		this->root = nullptr;
 		for (const auto& element : vertices) {
 			addElement(element);
 		}
@@ -150,25 +152,27 @@ public:
 			getRightSubtree()->getHeightAndLeaves();
 			if (this->root->isLeaf()) {
 				this->root->height = 0;
-				this->root->num_of_leaves = 1;
 				this->root->msl = 0;
+				this->root->num_of_leaves = 1;
 			}
 			else if (this->root->left != nullptr && this->root->right != nullptr) {
 				this->root->height = std::max(this->root->left->height, this->root->right->height) + 1;
-				if(this->root->left->height == this->root->right->height)
+				this->root->msl = 2 + this->root->right->height + this->root->left->height;
+				if (this->root->left->height == this->root->right->height)
 					this->root->num_of_leaves = this->root->left->num_of_leaves + this->root->right->num_of_leaves;
-				else this->root->num_of_leaves = std::max(this->root->left->num_of_leaves, this->root->right->num_of_leaves);
-				this->root->msl = 2 + this->root->right->msl + this->root->left->msl;
+				else if (this->root->left->height > this->root->right->height)
+					this->root->num_of_leaves = this->root->left->num_of_leaves;
+				else this->root->num_of_leaves = this->root->right->num_of_leaves;
 			}
 			else if (this->root->left != nullptr) {
 				this->root->height = this->root->left->height + 1;
 				this->root->num_of_leaves = this->root->left->num_of_leaves;
-				this->root->msl = 1 + this->root->left->msl;
+				this->root->msl = 1 + this->root->left->height;
 			}
 			else {
 				this->root->height = this->root->right->height + 1;
 				this->root->num_of_leaves = this->root->right->num_of_leaves;
-				this->root->msl = 1 + this->root->right->msl;
+				this->root->msl = 1 + this->root->right->height;
 			}
 		}
 	}
@@ -195,7 +199,7 @@ public:
 				max_height = this->root->height;
 			}
 		}
-		this->root->is_root = true;
+		if(this->root != nullptr) this->root->is_root = true;
 	}
 
 	void markMSL(const int64_t& max) {
@@ -205,18 +209,33 @@ public:
 			if (this->root->msl == max) {
 				this->root->is_MSL = true;
 			}
-			if (this->root->is_MSL == true) {
+		}
+	}
+
+	void markB() {
+		if (!(this->root == nullptr)) {
+			getLeftSubtree()->markB();
+			getRightSubtree()->markB();
+			if (this->root->is_MSL == true && this->root->left != nullptr && this->root->right != nullptr) {
 				this->root->b = this->root->right->num_of_leaves * this->root->left->num_of_leaves;
+			}
+			else if (this->root->is_MSL == true && this->root->left != nullptr) {
+				this->root->b = this->root->left->num_of_leaves;
+			}
+			else if (this->root->is_MSL == true && this->root->right != nullptr) {
+				this->root->b = this->root->right->num_of_leaves;
 			}
 		}
 	}
+
+	
 
 	void markA() {
 		if (this->root == nullptr) return;
 		if (this->root->left != nullptr && this->root->right != nullptr) {
 			if (this->root->right->height == this->root->left->height) {
-				this->root->right->a = this->root->b + this->root->right->num_of_leaves * this->root->a / this->root->num_of_leaves;
-				this->root->left->a = this->root->b + this->root->left->num_of_leaves * this->root->a / this->root->num_of_leaves;
+				this->root->right->a = this->root->b + this->root->right->num_of_leaves * (this->root->a / this->root->num_of_leaves);
+				this->root->left->a = this->root->b + this->root->left->num_of_leaves * (this->root->a / this->root->num_of_leaves);
 			}
 			else if (this->root->right->height > this->root->left->height) {
 				this->root->right->a = this->root->a + this->root->b;
@@ -228,7 +247,7 @@ public:
 			}
 		}
 		else if (this->root->left != nullptr) this->root->left->a = this->root->a + this->root->b;
-		else if (this->root->left != nullptr) this->root->right->a = this->root->a + this->root->b;
+		else if (this->root->right != nullptr) this->root->right->a = this->root->a + this->root->b;
 		getLeftSubtree()->markA();
 		getRightSubtree()->markA();
 	}
@@ -268,17 +287,18 @@ int main() {
 	int64_t m = tree.findMaximumSemipathLength();
 	tree.markMSL(m);
 	tree.markRoot();
+	tree.markB();
 	tree.markA();
 	tree.getResult();
-	/*std::function<void(Node*)> print_height = [](Node* x) { std::cout << x->height << " " 
-																<< x->num_of_leaves << " "
-																<< x->msl << " "
-																<< x->is_MSL << " "
-																<< x->b << " "
-																<< x->is_root << " "
-																<< x->c << "|"; };*/
-	
-
+	//std::function<void(Node*)> print_height = [](Node* x) { std::cout << x->height << " " 
+	//															<< x->num_of_leaves << " "
+	//															<< x->msl << " "
+	//															<< x->is_MSL << " "
+	//															<< x->b << " "
+	//															<< x->a << " "
+	//															<< x->c << "|"; };
+	//std::cout << "\n";
+	//tree.prefixTraverse(print_height);
 	std::ofstream output("output.txt");
 	std::function<void(Node*)> writeToFile = [&output](Node* x) { output << x->value << " " << x->c << "\n"; };
 	tree.prefixTraverse(writeToFile);
