@@ -15,7 +15,7 @@ struct Node {
 	int64_t msl = 0;
 	int64_t b = 0;
 	int64_t a = 0;
-	int64_t c = 0;
+	int64_t c = 1;
 	bool is_root = false;
 	bool is_MSL = false;
 	Node* left = nullptr;
@@ -25,6 +25,8 @@ struct Node {
 	}
 };
 
+int64_t MAX_PATH = 0;
+int64_t MAX_HEIGHT = 0;
 
 class BinarySearchTree {
 
@@ -169,7 +171,7 @@ public:
 				this->root->num_of_leaves = this->root->left->num_of_leaves;
 				this->root->msl = 1 + this->root->left->height;
 			}
-			else {
+			else if (this->root->right != nullptr) {
 				this->root->height = this->root->right->height + 1;
 				this->root->num_of_leaves = this->root->right->num_of_leaves;
 				this->root->msl = 1 + this->root->right->height;
@@ -179,24 +181,22 @@ public:
 
 
 	int64_t findMaximumSemipathLength() {
-		int64_t max_path = 0;
 		if (!(this->root == nullptr)) {
 			getLeftSubtree()->findMaximumSemipathLength();
 			getRightSubtree()->findMaximumSemipathLength();
-			if (this->root->msl > max_path) {
-				max_path = this->root->msl;
+			if (this->root->msl > MAX_PATH) {
+				MAX_PATH = this->root->msl;
 			}
 		}
-		return max_path;
+		return MAX_PATH;
 	}
 
 	void markRoot() {
-		int64_t max_height = 0;
 		if (!(this->root == nullptr)) {
-			getLeftSubtree()->findMaximumSemipathLength();
-			getRightSubtree()->findMaximumSemipathLength();
-			if (this->root->height > max_height) {
-				max_height = this->root->height;
+			getLeftSubtree()->markRoot();
+			getRightSubtree()->markRoot();
+			if (this->root->height > MAX_HEIGHT) {
+				MAX_HEIGHT = this->root->height;
 			}
 		}
 		if(this->root != nullptr) this->root->is_root = true;
@@ -241,7 +241,7 @@ public:
 				this->root->right->a = this->root->a + this->root->b;
 				this->root->left->a = this->root->b;
 			}
-			else {
+			else if (this->root->left->height > this->root->right->height) {
 				this->root->left->a = this->root->a + this->root->b;
 				this->root->right->a = this->root->b;
 			}
@@ -279,26 +279,16 @@ int main() {
 	std::vector<int64_t> vertices = readFromFile("input.txt");
 	BinarySearchTree tree(vertices);
 	tree.deleteElementRight(vertices[0]);
-	//std::function<void(Node*)> print_value = [](Node* x) { std::cout << x->value << "             "; };
-	//tree.prefixTraverse(print_value);
 
-	//std::cout << "\n";
-	tree.getHeightAndLeaves();
-	int64_t m = tree.findMaximumSemipathLength();
-	tree.markMSL(m);
-	tree.markRoot();
-	tree.markB();
-	tree.markA();
-	tree.getResult();
-	//std::function<void(Node*)> print_height = [](Node* x) { std::cout << x->height << " " 
-	//															<< x->num_of_leaves << " "
-	//															<< x->msl << " "
-	//															<< x->is_MSL << " "
-	//															<< x->b << " "
-	//															<< x->a << " "
-	//															<< x->c << "|"; };
-	//std::cout << "\n";
-	//tree.prefixTraverse(print_height);
+	if (vertices.size() > 2) {
+		tree.getHeightAndLeaves();
+		int64_t m = tree.findMaximumSemipathLength();
+		tree.markMSL(m);
+		tree.markRoot();
+		tree.markB();
+		tree.markA();
+		tree.getResult();
+	}
 	std::ofstream output("output.txt");
 	std::function<void(Node*)> writeToFile = [&output](Node* x) { output << x->value << " " << x->c << "\n"; };
 	tree.prefixTraverse(writeToFile);
