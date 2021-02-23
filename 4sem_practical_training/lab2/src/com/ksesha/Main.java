@@ -20,11 +20,13 @@ public class Main {
         System.out.println("Find by purpose and min loan: " + list.findCredit(Purpose.LEASING,75000).toString());
 
         System.out.println();
-        System.out.println("You've selected: " +list.getCredit(credit).toString());
-        Context context1 = new Context(new EnlargeCreditLine());
+        System.out.println("You've selected: " + list.getCredit(credit).toString());
+        Context context1 = new Context();
+        context1.setStrategy(new EnlargeCreditLine());
         Credit new_credit = context1.executeStrategy(credit, 3);
         System.out.println("Credit with new term is: " + new_credit.toString());
-        Context context2 = new Context(new AnticipatedRepayment());
+        Context context2 = new Context();
+        context2.setStrategy(new AnticipatedRepayment());
         System.out.println("Credit with new term is: " + context2.executeStrategy(new_credit, 10).toString());
     }
 }
