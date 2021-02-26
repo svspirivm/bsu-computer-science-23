@@ -32,11 +32,6 @@ std::string Palindrome(const std::string& str) {
 		}
 	}
 
-	for (auto item : matrix) {
-		for (auto i : item) std::cout << i << " ";
-		std::cout << "\n";
-	}
-
 	int i = 0;
 	int j = matrix.size() - 1;
 
@@ -44,9 +39,6 @@ std::string Palindrome(const std::string& str) {
 	else if(matrix[0][matrix.size() - 1] == 1) return std::string(1, str[0]);
 
 	while (j > i) {
-		///if (matrix[i][j] > matrix[i + 1][j - 1] && max_palindrome.size() * 2 < matrix[0][matrix.size() - 1] &&
-		//	(matrix[i + 1][j - 1] == std::max(matrix[i][j - 1], matrix[i + 1][j]) || 
-		//		matrix[i][j - 1] == std::max(matrix[i + 1][j - 1], matrix[i + 1][j]))) {
 		if(str[i] == str[j] && max_palindrome.size() * 2 < matrix[0][matrix.size() - 1]) {
 			max_palindrome += str[j];
 			i++;
@@ -60,7 +52,7 @@ std::string Palindrome(const std::string& str) {
 		}
 	}
 	if (i == j && max_palindrome.size() * 2 < matrix[0][matrix.size() - 1]) max_palindrome += str[i];
-	//std::cout << max_palindrome;
+	
 	auto it = max_palindrome.rbegin();
 	if (matrix[0][matrix.size() - 1] % 2 == 0) {
 		std::string tmp_string (it, max_palindrome.rend());
@@ -70,7 +62,7 @@ std::string Palindrome(const std::string& str) {
 		std::string tmp_string(it + 1, max_palindrome.rend());
 		max_palindrome = max_palindrome + tmp_string;
 	}
-	std::cout << '\n' << max_palindrome;
+
 	return max_palindrome;
 }
 
