@@ -1,6 +1,6 @@
 #pragma warning(disable : 4996)
 #include<iostream>
-#include<algorithm>
+#include<queue>
 #include<vector>
 #include <stdio.h>
 
@@ -20,13 +20,16 @@ int main() {
 	fclose(file);
 
 	int64_t result = 0;
-	std::vector<int64_t> v(frequency);
-	while (v.size() >= 2) {
-		std::sort(v.begin(), v.end());
-		result += v[0] + v[1];
-		v[1] += v[0];
-		std::vector<int64_t> v1(v.begin() + 1, v.end());
-		v = v1;
+
+	std::priority_queue<int64_t, std::vector<int64_t>, std::greater<int64_t>> q(frequency.begin(), frequency.end());
+
+	while (q.size() >= 2) {
+		int64_t first = q.top();
+		q.pop();
+		int64_t second = q.top();
+		q.pop();
+		q.push(first + second);
+		result += first + second;
 	}
 
 	FILE* file_out = freopen("huffman.out", "w", stdout);
