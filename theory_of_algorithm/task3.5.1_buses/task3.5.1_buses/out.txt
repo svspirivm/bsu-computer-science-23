@@ -1,0 +1,6 @@
+7
+StopNo 1 BusNo 1
+StopNo 2 BusNo 1
+StopNo 3 BusNo 1
+StopNo 4 BusNo 3
+StopNo 6 BusNo 3
