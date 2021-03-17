@@ -28,7 +28,7 @@ public:
 	}
 
 	void Union(int64_t& x, int64_t& y) {
-		x--;
+		x--; //because we count from zero
 		y--;
 		x = this->FindSet(x);
 		y = this->FindSet(y);
